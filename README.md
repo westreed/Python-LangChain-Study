@@ -2,6 +2,8 @@
 
 ## Install
 
+Python 3.9.13 환경을 기준으로 작성되었습니다.
+
 ```commandline
 pip install langchain
 pip install openai                  // ChatGPT API
