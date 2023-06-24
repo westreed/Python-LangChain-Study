@@ -1,10 +1,12 @@
+from key import APIKEY
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
 
-def init(openai_api_key):
-    llm = OpenAI(openai_api_key=openai_api_key, temperature=0.9)
+if __name__ == "__main__":
+    KEY = APIKEY()
+    llm = OpenAI(openai_api_key=KEY.openai_api_key, temperature=0.9)
 
     prompt = PromptTemplate.from_template("What is a {how} name for a company that makes {product}?")
 
