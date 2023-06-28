@@ -1,85 +1,61 @@
+# from langchain.callbacks import StreamingStdOutCallbackHandler
+from langchain import LLMChain, PromptTemplate, ConversationChain
+from langchain.callbacks.base import BaseCallbackHandler
+from langchain.memory import ConversationBufferMemory
+
 from key import APIKEY
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Any, Union
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import (
     AIMessage,
     HumanMessage,
-    SystemMessage,
+    SystemMessage, LLMResult, AgentAction, AgentFinish,
+)
+
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
 )
 
 
-class DialogueAgent:
-    """docs
-    가장 최하위 대화모델로, Simulator 클래스에서 inject를 통해, 모든 agent에
-    대화를 공유한다. 역할과 시스템 메시지를 분리하기 위해, 이런 방식이 채택됨.
-    """
-    def __init__(self, user_type:str, system_message: SystemMessage, model: ChatOpenAI) -> None:
-        self.user_type = user_type
-        self.system_message = system_message
-        self.model = model
-        self.prefix = f"{self.user_type}: "
-        self.message_history = None
-        self.reset()
+class StreamingStdOutCallbackHandler(BaseCallbackHandler):
+    """Callback handler for streaming. Only works with LLMs that support streaming."""
 
-    def reset(self):
-        self.message_history = []
-
-    def send(self) -> str:
-        message = self.model(
-            [
-                self.system_message,
-                HumanMessage(content="\n".join(self.message_history + [self.prefix])),
-            ]
-        )
-        return message.content
-
-    def receive(self, user_type: str, message: str) -> None:
-        self.message_history.append(f"{user_type}: {message}")
-
-
-class Simulator:
-    def __init__(
-            self,
-            agents: List[DialogueAgent],
-            selection_function: Callable[[int, List[DialogueAgent]], int],
+    def on_llm_start(
+        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
-        self.agents = agents
-        self._step = 0
-        self.select_next_speaker = selection_function
+        """Run when LLM starts running."""
 
-    def reset(self):
-        for agent in self.agents:
-            agent.reset()
+    def on_llm_new_token(self, token: str, **kwargs: Any) -> str:
+        """Run on new LLM token. Only available when streaming is enabled."""
+        print(token, end="")
+        return token
 
-    def inject(self, name: str, message: str):
-        for agent in self.agents:
-            agent.receive(name, message)
+    def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
+        """Run when LLM ends running."""
+        print()
 
-        # increment time
-        self._step += 1
-
-    def step(self) -> tuple[str, str]:
-        # 1. choose the next speaker
-        speaker_idx = self._step % 2
-        speaker = self.agents[speaker_idx]
-
-        # 2. next speaker sends message
-        message = speaker.send()
-
-        # 3. everyone receives message
-        for receiver in  self.agents:
-            receiver.receive(speaker.user_type, message)
-
-        # 4. next step
-        self._step += 1
-
-        return speaker.user_type, message
-
-"""
-1. 모델은 Input을 통해, 질문을 생성해야 한다.
-2. 모델은 질문과 답변을 제공받고, 평가를 해야한다.
-3. 기준에 따라, 위에서 제공받은 데이터를 기반으로 꼬리질문을 1개 생성해야한다.
+    def on_llm_error(
+        self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any
+    ) -> None:
+        """Run when LLM errors."""
 
 
-역할이 2개이상 필요한가?
-"""
+human_template = "{text}"
+
+KEY = APIKEY()
+memory = ConversationBufferMemory(return_messages=True)
+chat = ChatOpenAI(openai_api_key=KEY.openai_api_key, streaming=True, callbacks=[StreamingStdOutCallbackHandler()])
+chain = ConversationChain(llm=chat, memory=memory)
+
+
+speech_list = [
+    "당신은 면접관입니다. 지금부터, 회사인재를 뽑기 위한 면접관으로서 말투와 사고를 가져야 합니다. 개발자 직군과 관련해서 면접질문을 3개 생성해주세요.",
+    "아까 생성했던 질문 3개 중 1개를 뽑아서 적어주세요.",
+]
+for speech in speech_list:
+    chain.run(speech)
+
+print(memory.load_memory_variables({}))
