@@ -39,6 +39,10 @@ LangChain 은 LLM 공급자가 아니며, 인터페이스만 제공합니다.
 질문은 이미 생성되었기 때문에 질답이 끝나면 다음 질문 텍스트를 넣어줘야함.
 - ConversationChain의 경우에는 사용자가 먼저 메시지를 보내면, AI가 응답하는데 이 응답이 강제적으로 기록됨.
 
+#### Conversation buffer memory와 Conversation buffer window memory의 차이
+- window memory는 시간 경과에 따른 대화내역 목록을 유지한다.
+- 이때, input으로 받는 k값에 따라 저장할 대화의 양을 지정할 수 있음. k=1이면, 주고받은 대화내역을 딱 1개만 저장하는 개념.
+
 ### 4. Vectorstore
 
 - OpenAI의 Embeddings를 사용하여, 텍스트를 수치적인 벡터 데이터로 변환.
@@ -49,4 +53,5 @@ LangChain 은 LLM 공급자가 아니며, 인터페이스만 제공합니다.
 ### 5. Generative Agent
 
 - 학습을 통해, 특정 인격(?)을 생성하는 모델.
+
 
