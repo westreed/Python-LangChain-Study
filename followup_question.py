@@ -1,5 +1,5 @@
 from langchain import PromptTemplate, LLMChain
-from streaming_handler import StreamingStdOutCallbackHandler
+from custom_callback_handler import CustomCallbackHandler
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 
@@ -21,7 +21,7 @@ memory = ConversationBufferMemory(
 chat = ChatOpenAI(
     openai_api_key=KEY.openai_api_key,
     streaming=True,
-    callbacks=[StreamingStdOutCallbackHandler()]
+    callbacks=[CustomCallbackHandler()]
 )
 
 evaluate_answer_system_message = SystemMessagePromptTemplate.from_template(
