@@ -1,6 +1,6 @@
 import util
 from pprint import pprint
-from data_manager import DataManager, MemoryManager, KeyManager
+from data_manager import *
 from core.create_question import create_question
 
 
@@ -18,4 +18,7 @@ if __name__ == "__main__":
     input_process(data_manager)
     pprint(f"DataManager : {data_manager.get_data()}")
 
-    create_question(data_manager, memory_manager, key_manager)
+    question_list = create_question(data_manager, memory_manager, key_manager)
+    question_manager = QuestionManager(question_list)
+
+    print(question_list)
