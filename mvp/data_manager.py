@@ -52,3 +52,17 @@ class KeyManager:
             # Windows
             self.openai_api_key = os.getenv("OPENAI_API_KEY")
             self.serpapi_api_key = os.getenv("SERPAPI_API_KEY")
+
+
+class QuestionManager:
+    def __init__(self, question_list: List):
+        self.question = [] + question_list
+        self.count = -1
+
+    def get_question(self):
+        self.count += 1
+        return self.question[self.count]
+
+    def ask_question_count(self):
+        return self.count+1
+    
