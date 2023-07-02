@@ -6,7 +6,8 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate
 )
 
-from mvp.data_manager import DataManager, MemoryManager, KeyManager
+from mvp.data_manager import *
+from mvp.util import split_question
 from custom_callback_handler import CustomCallbackHandler
 from typing import *
 
@@ -46,6 +47,8 @@ As an interviewer, you need to generate {question_count} interview questions bas
 ```
 1. Question content
 2. Question content
+3. Question content
+...
 ```
 
 Please write in Korean.
@@ -56,7 +59,7 @@ Please write in Korean.
 
     create_question_chain = LLMChain(llm=chat, memory=memory_manager.get_memory(), prompt=prompt)
     output: str = create_question_chain(str(QUESTION_COUNT))
-    return output['text'].split("\n")
+    return split_question(output['text'])
 
 
 """
