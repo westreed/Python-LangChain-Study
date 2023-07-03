@@ -1,5 +1,4 @@
 from langchain import LLMChain
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     ChatPromptTemplate,
@@ -7,58 +6,46 @@ from langchain.prompts.chat import (
 )
 
 from mvp.data_manager import *
-from mvp.util import split_question
-from custom_callback_handler import CustomCallbackHandler
+from mvp.util import split_question, remove_indent
 from typing import *
 
 QUESTION_COUNT = 3
 
 
 def create_question(
-    data_manager: DataManager,
-    memory_manager: MemoryManager,
-    key_manager: KeyManager
+    data_manager: DataManager
 ) -> List:
-    chat = ChatOpenAI(
-        openai_api_key=key_manager.openai_api_key,
-        streaming=True,
-        callbacks=[CustomCallbackHandler()]
-    )
+    chat_manager = ChatManager()
 
     prompt = ChatPromptTemplate(
         messages=[
             SystemMessagePromptTemplate.from_template(
-                f"""You are an interviewer at {data_manager.company}.
+                remove_indent(
+                    f"""You are an interviewer at {data_manager.company}.
 
-JobAdvertisement At {data_manager.company}:
-{data_manager.requirement}
-
-Interviewee`s desired position:
-{data_manager.job}
-
-Interviewee`s coverletter:
-{data_manager.coverletter}"""),
+                {data_manager.get_userdata()}
+                """)),
 
             HumanMessagePromptTemplate.from_template(
-                """{chat_history}
-
-As an interviewer, you need to generate {question_count} interview questions based on the applicant's desired position, their cover letter. Additionally, consider the qualities and skills the company is looking for in candidates based on the job posting. Please follow the format below when creating the questions:
-
-```
-1. Question content
-2. Question content
-3. Question content
-...
-```
-
-Please write in Korean.
-"""
-            )],
-        input_variables=["chat_history", "question_count"],
+                remove_indent(
+                    """As an interviewer, you need to generate {question_count} interview questions based on the applicant's desired position, their cover letter. Additionally, consider the qualities and skills the company is looking for in candidates based on the job posting. Please follow the format below when creating the questions:
+                
+                    ```
+                    1. Question content
+                    2. Question content
+                    3. Question content
+                    ...
+                    ```
+                    
+                    Please write in Korean.
+                    """))
+        ],
+        input_variables=["question_count"],
     )
 
-    create_question_chain = LLMChain(llm=chat, memory=memory_manager.get_memory(), prompt=prompt)
-    output: str = create_question_chain(str(QUESTION_COUNT))
+    create_question_chain = LLMChain(llm=chat_manager.get_chat_model(),
+                                     prompt=prompt)
+    output = create_question_chain(str(QUESTION_COUNT))
     return split_question(output['text'])
 
 
