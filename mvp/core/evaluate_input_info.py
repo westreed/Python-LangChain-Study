@@ -6,7 +6,7 @@ from langchain.prompts.chat import (
 )
 
 from mvp.data_manager import *
-from mvp.util import split_question, remove_indent
+from mvp.util import remove_indent
 from typing import *
 
 
@@ -27,7 +27,7 @@ def evaluate_input_info(
 
             HumanMessagePromptTemplate.from_template(
                 remove_indent(
-                    """As an interviewer, Please read the cover letter and self-introduction of the interviewee and provide an evaluation from the {company}'s perspective, dividing it into positive aspects and areas for improvement. The format is as follows:
+                    """As an interviewer, Please read the cover letter and self-introduction of the interviewee and provide an evaluation from the {company}'s perspective, dividing it into positive aspects and areas for improvement. Please write in Korean. The format is as follows:
 
                     "좋은점":
                     - Content of positive aspects
@@ -43,4 +43,4 @@ def evaluate_input_info(
     create_question_chain = LLMChain(llm=chat_manager.get_chat_model(),
                                      prompt=prompt)
     output = create_question_chain(data_manager.company)
-    print(output['text'])
+    evaluation_manager.add_coverletter_evaluation(output)
