@@ -13,11 +13,12 @@ def input_user_info() -> Union[Dict, bool]:
         # input.json 파일이 없음.
         with open(f"{INPUT_FILE_NAME}.json", "w", encoding="UTF-8") as f:
             f.write(
-                """{
+"""{
     "user_company" : "",
     "user_job" : "",
     "job_requirement" : "",
-    "cover_letter" : ""
+    "cover_letter" : "",
+    "self_introduce" : ""
 }"""
             )
         print("input.json을 열고, 정보를 작성하세요.")
@@ -37,3 +38,7 @@ def split_question(question: str) -> List:
                 break
 
     return question_list
+
+
+def remove_indent(string: str) -> str:
+    return string.replace("    ", "")
