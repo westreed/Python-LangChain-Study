@@ -116,6 +116,14 @@ class EvaluationManager:
     def __init__(self):
         self.evaluation_records = {
             "coverletter": None,
-            "introduce": None,
             "answer": []
         }
+
+    def add_coverletter_evaluation(self, evaluation: str):
+        self.evaluation_records["coverletter"] = evaluation
+
+    def add_answer_evaluation(self, evaluation: str):
+        self.evaluation_records["answer"].append(evaluation)
+
+    def get_answer_evaluation(self) -> str:
+        return self.evaluation_records["answer"][-1]
