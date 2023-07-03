@@ -99,7 +99,8 @@ def make_router_chain(chat: ChatOpenAI, prompt_infos: List) -> LLMRouterChain:
 
 def question_and_answer(
     data_manager: DataManager,
-    question_manager: QuestionManager
+    question_manager: QuestionManager,
+    evaluation_manager: EvaluationManager
 ):
     chat_manager = ChatManager()
     question = question_manager.get_question()
@@ -125,6 +126,18 @@ def question_and_answer(
         destination_chains=destination_chains,
         default_chain=default_chain,
     )
-    res = chain(answer)
-    print("----")
+    evaluation = chain.run(answer)
+    result = remove_indent(
+        f"""면접관 질문:
+        {question}
+        
+        면접자 답변:
+        {answer}
+        
+        면접관 평가:
+        {evaluation}
+        """
+    )
+    evaluation_manager.add_answer_evaluation(result)
+    return result
 
