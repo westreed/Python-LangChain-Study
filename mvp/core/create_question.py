@@ -6,7 +6,7 @@ from langchain.prompts.chat import (
 )
 
 from mvp.data_manager import *
-from mvp.util import split_question, remove_indent
+from mvp.util import create_question_parser, remove_indent
 from typing import *
 
 QUESTION_COUNT = 10
@@ -46,7 +46,7 @@ def create_question(
     create_question_chain = LLMChain(llm=chat_manager.get_chat_model(),
                                      prompt=prompt)
     output = create_question_chain(str(QUESTION_COUNT))
-    return split_question(output['text'])
+    return create_question_parser(output['text'])
 
 
 """

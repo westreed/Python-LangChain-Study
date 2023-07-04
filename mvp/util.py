@@ -27,7 +27,7 @@ def input_user_info() -> Union[Dict, bool]:
     return input_data
 
 
-def split_question(question: str) -> List:
+def create_question_parser(question: str) -> List:
     question_list = question.replace("\n\n", "\n").split("\n")
 
     for quest_idx in range(len(question_list)):
@@ -40,7 +40,7 @@ def split_question(question: str) -> List:
     return question_list
 
 
-def parsing_follow_up_question(question: str) -> str:
+def follow_up_question_parser(question: str) -> str:
     return question.replace('심화질문', '').replace('- ', '').replace("'", "").replace(':\n', '')
 
 

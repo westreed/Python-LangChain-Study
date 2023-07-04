@@ -7,7 +7,7 @@ from langchain.prompts.chat import (
 from langchain.prompts import PromptTemplate
 
 from mvp.data_manager import *
-from mvp.util import remove_indent, parsing_follow_up_question
+from mvp.util import remove_indent, follow_up_question_parser
 from typing import *
 
 
@@ -47,4 +47,4 @@ def follow_up_question(
     followup_chain = LLMChain(llm=chat_manager.get_chat_model(),
                               prompt=prompt)
     output = followup_chain(evaluation_manager.get_answer_evaluation())
-    return parsing_follow_up_question(output['text'])
+    return follow_up_question_parser(output['text'])
