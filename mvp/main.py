@@ -32,10 +32,18 @@ if __name__ == "__main__":
     print(question_list)
     print("----------------------------------------")
 
-    for i in range(3):
-
-        question_and_answer(data_manager, question_manager, evaluation_manager)
+    for i in range(6):
+        question_and_answer(data_manager, QuestionEntity(question_manager.get_question()), evaluation_manager)
 
         print("----------------------------------------")
 
-        follow_up_question(data_manager, evaluation_manager)
+        for _ in range(3):
+            followup = follow_up_question(data_manager, evaluation_manager)
+            if followup == "Very nice good!":
+                break
+
+            question_and_answer(
+                data_manager,
+                QuestionEntity(followup),
+                evaluation_manager
+            )

@@ -104,12 +104,17 @@ class QuestionManager:
 
     def get_question(self) -> str:
         self.count += 1
-        if self.number > self.max_number:
+        if self.count > self.max_number:
             return "No questions."
         return self.question[self.count]
 
     def ask_question_count(self) -> int:
         return self.count + 1
+
+
+class QuestionEntity:
+    def __init__(self, question: str):
+        self.question = question
 
 
 class EvaluationManager:

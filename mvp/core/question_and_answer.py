@@ -22,7 +22,6 @@ from typing import *
 def make_specific_prompt_with_knowledge(
     data_manager: DataManager,
     question: str,
-    answer: str,
 ) -> List[Dict]:
     fit_feature_dict = {
         "job_fit": ("직무 적합성", "직무를 수행하는 데 필요한 기술,지식, 그리고 경험을 가지고 있는지 평가하는 것"),
@@ -84,7 +83,7 @@ def make_specific_prompt_with_knowledge(
     return prompt_infos
 
 
-def make_router_chain(chat: ChatOpenAI, prompt_infos: List) -> LLMRouterChain:
+def make_router_chain(llm: ChatOpenAI, prompt_infos: List) -> LLMRouterChain:
     destinations = [f"{p['name']}: {p['description']}" for p in prompt_infos]
     destinations_str = "\n".join(destinations)
     router_template = MULTI_PROMPT_ROUTER_TEMPLATE.format(
@@ -94,22 +93,22 @@ def make_router_chain(chat: ChatOpenAI, prompt_infos: List) -> LLMRouterChain:
         input_variables=["input"],
         output_parser=RouterOutputParser(),
     )
-    return LLMRouterChain.from_llm(chat, router_prompt)
+    return LLMRouterChain.from_llm(llm, router_prompt)
 
 
 def question_and_answer(
     data_manager: DataManager,
-    question_manager: QuestionManager,
+    question_entity: QuestionEntity,
     evaluation_manager: EvaluationManager
 ):
     chat_manager = ChatManager()
-    question = question_manager.get_question()
-    print(f"면접관: {question_manager.ask_question_count()}. {question}")
+    question = question_entity.question
+    print(f"면접관: {question}")
 
     answer = input("면접자:  ...질문에 답변하세요.\n")
 
-    prompt_infos = make_specific_prompt_with_knowledge(data_manager, question, answer)
-    router_chain = make_router_chain(chat_manager.get_chat_model(), prompt_infos)
+    prompt_infos = make_specific_prompt_with_knowledge(data_manager, question)
+    router_chain = make_router_chain(llm=chat_manager.get_chat_model(), prompt_infos=prompt_infos)
     default_chain = ConversationChain(llm=chat_manager.get_chat_model(), output_key="text")
 
     destination_chains = {}

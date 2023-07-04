@@ -40,5 +40,9 @@ def split_question(question: str) -> List:
     return question_list
 
 
+def parsing_follow_up_question(question: str) -> str:
+    return question.replace('심화질문', '').replace('- ', '').replace("'", "").replace(':\n', '')
+
+
 def remove_indent(string: str) -> str:
     return string.replace("    ", "")

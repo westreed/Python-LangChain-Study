@@ -9,7 +9,7 @@ from mvp.data_manager import *
 from mvp.util import split_question, remove_indent
 from typing import *
 
-QUESTION_COUNT = 3
+QUESTION_COUNT = 10
 
 
 def create_question(
