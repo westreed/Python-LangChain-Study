@@ -27,7 +27,7 @@ def input_user_info() -> Union[Dict, bool]:
     return input_data
 
 
-def split_question(question: str) -> List:
+def create_question_parser(question: str) -> List:
     question_list = question.replace("\n\n", "\n").split("\n")
 
     for quest_idx in range(len(question_list)):
@@ -38,6 +38,10 @@ def split_question(question: str) -> List:
                 break
 
     return question_list
+
+
+def follow_up_question_parser(question: str) -> str:
+    return question.replace('심화질문', '').replace('- ', '').replace("'", "").replace(':\n', '')
 
 
 def remove_indent(string: str) -> str:
