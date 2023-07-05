@@ -12,7 +12,7 @@ from typing import *
 QUESTION_COUNT = 3
 
 
-def create_question(
+def init_question_generator(
     data_manager: DataManager
 ) -> List:
     chat_manager = ChatManager()

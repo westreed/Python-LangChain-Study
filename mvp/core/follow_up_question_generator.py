@@ -11,7 +11,7 @@ from mvp.util import remove_indent
 from typing import *
 
 
-def follow_up_question(
+def follow_up_question_generator(
     data_manager: DataManager,
     evaluation_manager: EvaluationManager
 ):

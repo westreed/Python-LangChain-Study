@@ -1,10 +1,10 @@
 import util
 from pprint import pprint
 from data_manager import *
-from core.create_question import create_question
+from core.init_question_generator import init_question_generator
 from core.evaluate_input_info import evaluate_input_info
 from core.question_and_answer import question_and_answer
-from core.follow_up_question import follow_up_question
+from core.follow_up_question_generator import follow_up_question_generator
 
 
 def input_process(manager: DataManager):
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     print("----------------------------------------")
 
-    question_list = create_question(data_manager)
+    question_list = init_question_generator(data_manager)
     question_manager = QuestionManager(question_list)
 
     print(question_list)
@@ -38,4 +38,4 @@ if __name__ == "__main__":
 
         print("----------------------------------------")
 
-        follow_up_question(data_manager, evaluation_manager)
+        follow_up_question_generator(data_manager, evaluation_manager)
