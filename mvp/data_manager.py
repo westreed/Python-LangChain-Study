@@ -70,7 +70,7 @@ class ChatManager:
         streaming: bool = True,
         model: str = "gpt-3.5-turbo",
         temperature: int = 0.5
-    ) -> object:
+    ):
         """
 
         :param custom_callback_handler: CustomCallbackHandler
@@ -115,6 +115,10 @@ class QuestionManager:
 class QuestionEntity:
     def __init__(self, question: str):
         self.question = question
+        self.answer = None
+
+    def add_answer(self, answer: str):
+        self.answer = answer
 
 
 class EvaluationManager:
@@ -132,3 +136,6 @@ class EvaluationManager:
 
     def get_answer_evaluation(self) -> str:
         return self.evaluation_records["answer"][-1]
+
+    def get_all_evaluation(self) -> Dict:
+        return self.evaluation_records

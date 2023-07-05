@@ -41,8 +41,12 @@ def create_question_parser(question: str) -> List:
 
 
 def follow_up_question_parser(question: str) -> str:
-    return question.replace('심화질문', '').replace('- ', '').replace("'", "").replace(':\n', '')
+    question.replace("\n", "")
+    for str_idx in range(len(question)):
+        if question[str_idx] == ":":
+            return question[str_idx+1:].strip()
+    return question
 
 
 def remove_indent(string: str) -> str:
-    return string.replace("    ", "")
+    return string.replace("    ", "").replace("\t", "")

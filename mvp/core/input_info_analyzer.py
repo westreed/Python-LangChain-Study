@@ -10,7 +10,7 @@ from mvp.util import remove_indent
 from typing import *
 
 
-def evaluate_input_info(
+def input_info_analyzer(
     data_manager: DataManager,
     evaluation_manager: EvaluationManager
 ):

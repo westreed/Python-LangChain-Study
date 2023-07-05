@@ -96,36 +96,39 @@ def make_router_chain(llm: ChatOpenAI, prompt_infos: List) -> LLMRouterChain:
     return LLMRouterChain.from_llm(llm, router_prompt)
 
 
-def question_and_answer(
-    data_manager: DataManager,
-    question_entity: QuestionEntity,
-    evaluation_manager: EvaluationManager
-):
-    chat_manager = ChatManager()
-    question = question_entity.question
-    print(f"면접관: {question}")
-
-    answer = input("면접자:  ...질문에 답변하세요.\n")
-
-    prompt_infos = make_specific_prompt_with_knowledge(data_manager, question)
-    router_chain = make_router_chain(llm=chat_manager.get_chat_model(), prompt_infos=prompt_infos)
-    default_chain = ConversationChain(llm=chat_manager.get_chat_model(), output_key="text")
-
+def make_destination_chains(llm: ChatOpenAI, prompt_infos: List) -> Dict[str, LLMChain]:
     destination_chains = {}
     for p_info in prompt_infos:
         name = p_info["name"]
         prompt_template = p_info["prompt_template"]
         prompt = PromptTemplate(template=prompt_template,
                                 input_variables=["input"])
-        chain = LLMChain(llm=chat_manager.get_chat_model(), prompt=prompt)
-        destination_chains[name] = chain
+        destination_chains[name] = LLMChain(llm=llm, prompt=prompt)
+    return destination_chains
+
+
+def answer_analyzer(
+    data_manager: DataManager,
+    question_entity: QuestionEntity,
+    evaluation_manager: EvaluationManager,
+):
+    question = question_entity.question
+    answer = question_entity.answer
+    llm = ChatManager().get_chat_model()
+
+    prompt_infos = make_specific_prompt_with_knowledge(data_manager, question)
+    router_chain = make_router_chain(llm=llm, prompt_infos=prompt_infos)
+    default_chain = ConversationChain(llm=llm, output_key="text")
+    destination_chains = make_destination_chains(llm=llm, prompt_infos=prompt_infos)
 
     chain = MultiPromptChain(
         router_chain=router_chain,
         destination_chains=destination_chains,
         default_chain=default_chain,
     )
+
     evaluation = chain.run(answer)
+
     result = remove_indent(
         f"""면접관 질문:
         {question}
