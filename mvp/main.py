@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     print("----------------------------------------")
 
-    # CreateQuestion 함수에서 초기질문을 생성합니다.
+    # init_question_generator 함수에서 초기질문을 생성합니다.
     question_list = init_question_generator(data_manager)
     # 생성된 질문리스트를 QuestionManager에 저장합니다.
     question_manager = QuestionManager(question_list)
