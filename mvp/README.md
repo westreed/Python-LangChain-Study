@@ -10,3 +10,5 @@
 - 출력으로 N개의 질문이 생성된다.
   - 생성된 질문은 create_question_parser를 통해 List형태로 만든다.
 - 파싱한 질문리스트를 반환한다.
+
+![시퀀스다이어그램](https://github.com/westreed/Python-Langchain-Study/raw/main/mvp/img/CreateQuestionDiagram.png)
